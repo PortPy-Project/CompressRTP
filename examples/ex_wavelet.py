@@ -16,7 +16,7 @@ def ex_wavelet():
     # for the customized beams_dict, you can pass the argument beam_ids
     # creating plan and select among the beams which are 30 degrees apart
     my_plan = pp.Plan(patient_id, data_dir, beam_ids=[0,1,2,3,4,5,6])
-    wavelet_basis = LowDimRT.get_low_dim_basis(my_plan.inf_matrix , 'wavelet')
+    wavelet_basis = LowDimRT.get_low_dim_basis(my_plan.inf_matrix, 'wavelet')
     
 if __name__ == "__main__":
     ex_wavelet()

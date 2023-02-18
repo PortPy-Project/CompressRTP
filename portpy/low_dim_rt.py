@@ -22,27 +22,44 @@ class LowDimRT:
         :return: a dictionary that contains the dimension reduction basis in the format of
         dict: {
                    'beam_ID': list(int),
-                   'wavelet_basis': list(float)
+                   'low_dim_basis': list(array)
                   }
         """
-        low_dim_basis = dict()
+        num_of_beams = len(inf_matrix.beamlets_dict)
+        low_dim_basis = dict.fromkeys(range(num_of_beams), [])
+        beamlets = dict()
+        beam_indices = list()
+        max_dim_1 = 0
+        max_dim_2 = 0
+        num_of_beamlets = 0
+        for ind in range(num_of_beams):
+            beamlets[ind] = inf_matrix.create_beamlet_idx_2d_grid(ind)
+            beam_indices.append(np.max(beamlets[ind])+1)
+            if beamlets[ind].shape[0] > max_dim_1:
+                max_dim_1 = beamlets[ind].shape[0]
+            if beamlets[ind].shape[1] > max_dim_2:
+                max_dim_2 = beamlets[ind].shape[1]
+            if beam_indices[ind] > num_of_beamlets:
+                num_of_beamlets = beam_indices[ind]
+        index_position = list()
+        for ind in range(num_of_beams):
+            for i in range(0 if ind == 0 else beam_indices[ind-1], beam_indices[ind]):
+                index_position.append((np.where(beamlets[ind]==i)[0][0],np.where(beamlets[ind]==i)[1][0]))
         if compression == 'wavelet':
-            for ind in range(len(inf_matrix.beamlets_dict)):
-                    index = 0
-                    beamlets = inf_matrix.create_beamlet_idx_2d_grid(ind)
-                    x = int(np.ceil(beamlets.shape[0]/2));
-                    y = int(np.ceil(beamlets.shape[1]/2));
-                    wavelet_basis_approximation = np.zeros((x*y, 4*x*y))
-                    wavelet_basis_horizontal = np.zeros_like(wavelet_basis_approximation)
-                    for row in range(x):
-                        for col in range(y):
-                            if beamlets[2*row-1][2*col-1] != -1:
-                                beamlet_2d_grid = np.zeros((x, y))
-                                beamlet_2d_grid[row][col] = 1;
-                                approximation_coeffs = pywt.idwt2((beamlet_2d_grid, (None, None, None)), 'haar', mode='symmetric')
-                                horizontal_coeffs = pywt.idwt2((None, (beamlet_2d_grid, None, None)), 'haar', mode='symmetric')
-                                wavelet_basis_approximation[index] = np.concatenate(approximation_coeffs)
-                                wavelet_basis_horizontal[index] = np.concatenate(horizontal_coeffs)
-                                index += 1
-                    low_dim_basis[ind] = np.concatenate([wavelet_basis_approximation, wavelet_basis_horizontal])
+            x = int(np.ceil(max_dim_1/2));
+            y = int(np.ceil(max_dim_2/2));
+            for row in range(x):
+                for col in range(y):
+                    beamlet_2d_grid = np.zeros((x, y))
+                    beamlet_2d_grid[row][col] = 1;
+                    approximation_coeffs = pywt.idwt2((beamlet_2d_grid, (None, None, None)), 'sym4', mode='periodization')
+                    horizontal_coeffs = pywt.idwt2((None, (beamlet_2d_grid, None, None)), 'sym4', mode='periodization')
+                    for ind in range(num_of_beams):
+                        if 2*row-1 < beamlets[ind].shape[0] and 2*col-1 < beamlets[ind].shape[1] and beamlets[ind][2*row-1][2*col-1] != -1:
+                            approximation = np.zeros(num_of_beamlets)
+                            horizontal = np.zeros(num_of_beamlets)
+                            for i in range(0 if ind == 0 else beam_indices[ind-1], beam_indices[ind]):
+                                approximation[i] = approximation_coeffs[index_position[i]]
+                                horizontal[i] = horizontal_coeffs[index_position[i]]
+                            low_dim_basis[ind].append(np.concatenate((approximation,horizontal)))
         return low_dim_basis
