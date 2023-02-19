@@ -29,11 +29,13 @@ class LowDimRT:
         low_dim_basis = dict.fromkeys(range(num_of_beams), [])
         beamlets = dict()
         beam_indices = list()
+        index_position = list()
         max_dim_1 = 0
         max_dim_2 = 0
         num_of_beamlets = 0
         for ind in range(num_of_beams):
-            beamlets[ind] = inf_matrix.create_beamlet_idx_2d_grid(ind)
+            beamlet = inf_matrix.create_beamlet_idx_2d_grid(ind)
+            beamlets[ind] = beamlet[range(0,len(beamlet),2)]
             beam_indices.append(np.max(beamlets[ind])+1)
             if beamlets[ind].shape[0] > max_dim_1:
                 max_dim_1 = beamlets[ind].shape[0]
@@ -41,17 +43,13 @@ class LowDimRT:
                 max_dim_2 = beamlets[ind].shape[1]
             if beam_indices[ind] > num_of_beamlets:
                 num_of_beamlets = beam_indices[ind]
-        index_position = list()
-        for ind in range(num_of_beams):
             for i in range(0 if ind == 0 else beam_indices[ind-1], beam_indices[ind]):
-                index_position.append((np.where(beamlets[ind]==i)[0][0],np.where(beamlets[ind]==i)[1][0]))
+                index_position.append((np.where(beamlets[ind]==i)[0][0],np.where(beamlets[ind]==i)[1][0]))          
         if compression == 'wavelet':
-            x = int(np.ceil(max_dim_1/2));
-            y = int(np.ceil(max_dim_2/2));
-            for row in range(x):
-                for col in range(y):
-                    beamlet_2d_grid = np.zeros((x, y))
-                    beamlet_2d_grid[row][col] = 1;
+            beamlet_2d_grid = np.zeros((int(np.ceil(max_dim_1/2)), int(np.ceil(max_dim_2/2))))
+            for row in range(beamlet_2d_grid.shape[0]):
+                for col in range(beamlet_2d_grid.shape[1]):
+                    beamlet_2d_grid[row][col] = 1
                     approximation_coeffs = pywt.idwt2((beamlet_2d_grid, (None, None, None)), 'sym4', mode='periodization')
                     horizontal_coeffs = pywt.idwt2((None, (beamlet_2d_grid, None, None)), 'sym4', mode='periodization')
                     for ind in range(num_of_beams):
@@ -61,5 +59,6 @@ class LowDimRT:
                             for i in range(0 if ind == 0 else beam_indices[ind-1], beam_indices[ind]):
                                 approximation[i] = approximation_coeffs[index_position[i]]
                                 horizontal[i] = horizontal_coeffs[index_position[i]]
-                            low_dim_basis[ind].append(np.concatenate((approximation,horizontal)))
+                            low_dim_basis[ind].append(np.concatenate((approximation, horizontal)))
+                    beamlet_2d_grid[row][col] = 0
         return low_dim_basis
