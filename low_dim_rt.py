@@ -60,7 +60,7 @@ class LowDimRT:
     def run_IMRT_fluence_map_low_dim(my_plan: Plan, inf_matrix: InfluenceMatrix = None, solver: str = 'MOSEK',
                                    verbose: bool = True, cvxpy_options: dict = None, **opt_params) -> dict:
         """
-        Run optimization to create optimal plan based upon clinical criteria
+        It runs optimization to create optimal plan based upon clinical criteria
         :param my_plan: object of class Plan
         :param inf_matrix: object of class InfluenceMatrix
         :param solver: default solver 'MOSEK'. check cvxpy website for available solvers
@@ -174,8 +174,7 @@ class LowDimRT:
 
         # creating the wavelet incomplete basis representing a low dimensional subspace for dimension reduction
         wavelet_basis = LowDimRT.get_low_dim_basis(inf_matrix, 'wavelet')
-        u, s, vh = scipy.linalg.svd(wavelet_basis)
-        u = u[:, :int(np.ceil(wavelet_basis.shape[1]/3))]
+        u, s, vh = scipy.sparse.linalg.svds(wavelet_basis, k=int(np.ceil(A.shape[1]/2)))
         # Smoothness Constraint
         y = cp.Variable(u.shape[1])
         constraints += [u @ y == x]
