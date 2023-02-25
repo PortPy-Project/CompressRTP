@@ -30,7 +30,8 @@ class LowDimRT:
         """
         num_of_beams = len(inf_matrix.beamlets_dict)
         low_dim_basis = list()
-        beamlets = inf_matrix.get_bev_2d_grid_in_orig_res(range(num_of_beams))
+        beam_id = [inf_matrix.beamlets_dict[i]['beam_id'] for i in range(num_of_beams)]
+        beamlets = inf_matrix.get_bev_2d_grid_in_orig_res(beam_id=beam_id)
         index_position = list()
         num_of_beamlets = inf_matrix.beamlets_dict[num_of_beams-1]['end_beamlet'] + 1
         for ind in range(num_of_beams):
@@ -174,8 +175,7 @@ class LowDimRT:
 
         # creating the wavelet incomplete basis representing a low dimensional subspace for dimension reduction
         wavelet_basis = LowDimRT.get_low_dim_basis(inf_matrix, 'wavelet')
-        # improving the condition number of the problem by removing 10% of the smallest singular values
-        u, s, vh = scipy.sparse.linalg.svds(wavelet_basis, k=int(np.floor(0.9*wavelet_basis.shape[1])))
+        u, s, vh = scipy.sparse.linalg.svds(wavelet_basis, k=int(np.ceil(A.shape[1]/2.5)))
         # Smoothness Constraint
         y = cp.Variable(u.shape[1])
         constraints += [u @ y == x]
