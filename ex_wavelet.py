@@ -17,7 +17,7 @@ def ex_wavelet():
     # for the customized beams_dict, you can pass the argument beam_ids
     my_plan = pp.Plan(patient_id, data_dir)
     # run IMRT fluence map optimization using a low dimensional subspace for fluence map compression
-    # sol = pp.Optimize.run_IMRT_fluence_map_CVXPy(my_plan, solver='MOSEK', opt_params={'smoothness_weight': 10})
+    sol = pp.Optimize.run_IMRT_fluence_map_CVXPy(my_plan, solver='MOSEK', opt_params={'smoothness_weight': 10})
     sol_low_dim = LowDimRT.run_IMRT_fluence_map_low_dim(my_plan, solver='MOSEK', opt_params={'smoothness_weight': 10})
     sol_low_dim_only = LowDimRT.run_IMRT_fluence_map_low_dim(my_plan, solver='MOSEK',
                                                              opt_params={'smoothness_weight': 0})
