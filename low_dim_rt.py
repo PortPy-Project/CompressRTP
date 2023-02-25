@@ -174,7 +174,8 @@ class LowDimRT:
 
         # creating the wavelet incomplete basis representing a low dimensional subspace for dimension reduction
         wavelet_basis = LowDimRT.get_low_dim_basis(inf_matrix, 'wavelet')
-        u, s, vh = scipy.sparse.linalg.svds(wavelet_basis, k=int(np.ceil(A.shape[1]/2)))
+        # improving the condition number of the problem by removing 10% of the smallest singular values
+        u, s, vh = scipy.sparse.linalg.svds(wavelet_basis, k=int(np.floor(0.9*wavelet_basis.shape[1])))
         # Smoothness Constraint
         y = cp.Variable(u.shape[1])
         constraints += [u @ y == x]
