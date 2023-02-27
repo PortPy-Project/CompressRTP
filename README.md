@@ -1,6 +1,6 @@
 # LowDimRT
 
-### Note: The package is at its early stages of development. At this point, we're only including our recent work [1] where we used wavelets to induce fluence smoothness. This work was originally written in Matlab. The wavelet code code would be ready soon. 
+#### Note: The package is at its early stages of development. At this point, we're only including our recent work [1] where we used wavelets to induce fluence smoothness. This work was originally written in Matlab. The wavelet code would be ready soon. 
 
 Low-dimensional radiation therapy (LowDimRT) is a python package that aims to leverage and re-purpose the dimensionality reduction tools to improve the speed and quality of the radiation treatment planning. The dimensionality reduction has a rich history in statistics and has gained attention recently and re-emerged as a powerful tool to deal with the increasingly dimensional problems arising in the fields of big-data and machine learning. They also have made profound impacts in imaging science where the high-dimensional images are often lying in a low-dimensional subspace. 
 
