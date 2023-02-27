@@ -1,5 +1,7 @@
 # LowDimRT
 
+### Note: The package is at its early stages of development. At this point, we're only including our recent work [1] where we used wavelets to induce fluence smoothness. This work was originally written in Matlab. The wavelet code code would be ready soon. 
+
 Low-dimensional radiation therapy (LowDimRT) is a python package that aims to leverage and re-purpose the dimensionality reduction tools to improve the speed and quality of the radiation treatment planning. The dimensionality reduction has a rich history in statistics and has gained attention recently and re-emerged as a powerful tool to deal with the increasingly dimensional problems arising in the fields of big-data and machine learning. They also have made profound impacts in imaging science where the high-dimensional images are often lying in a low-dimensional subspace. 
 
 The optimization problems arising in radiation therapy also suffer from the curse of dimensionality with so many radiotherapy machine parameters to be optimized (e.g., beamlets, MLC leaf positions, beam angles) and the discretization of the patient body to many small 3-dimensional cubes (known as voxels). This is an on-going project and at this point we only  included the work based on our recent publication [1] which uses low-frequency wavelets to represent and characterize the beamlet intensities in order to induce fluence smoothness in intensity modulated radiation therapy (IMRT).  
@@ -18,4 +20,4 @@ LowDimRT code is distributed under **Apache License 2.0**, and is available for 
 3. [Gourav Jhanwar](https://github.com/gourav3017) ([Memorial Sloan Kettering Cancer Center](https://www.mskcc.org/))
 
 # Reference 
-* [1] Tefagh and Zarepisheh, “Built-in Wavelet-Induced Smoothness to Reduce Plan Complexity in Intensity Modulated Radiation Therapy (IMRT)”, to appear in _Physics in Medicine and Biology_, doi: [10.1088/1361-6560/acbefe](https://doi.org/10.1088/1361-6560/acbefe)
+* [1] Tefagh and Zarepisheh, “Built-in Wavelet-Induced Smoothness to Reduce Plan Complexity in Intensity Modulated Radiation Therapy (IMRT)”, Physics in Medicine and Biology_, doi: [10.1088/1361-6560/acbefe](https://doi.org/10.1088/1361-6560/acbefe)
