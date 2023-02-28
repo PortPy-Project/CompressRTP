@@ -46,16 +46,22 @@ class LowDimRT:
                     beamlet_2d_grid[row][col] = 1
                     approximation_coeffs = pywt.idwt2((beamlet_2d_grid, (None, None, None)), 'sym4', mode='periodization')
                     horizontal_coeffs = pywt.idwt2((None, (beamlet_2d_grid, None, None)), 'sym4', mode='periodization')
-                    for ind in range(num_of_beams):
-                        if 2*row-1 < beamlets[ind].shape[0] and 2*col-1 < beamlets[ind].shape[1] and beamlets[ind][2*row-1][2*col-1] != -1:
+                    for b in range(num_of_beams):
+                        if ((2*row-1<beamlets[b].shape[0] and 2*col-1<beamlets[b].shape[1] and beamlets[b][2*row-1][2*col-1] != -1) or 
+                            (2*row-1<beamlets[b].shape[0] and 2*col<beamlets[b].shape[1] and beamlets[b][2*row-1][2*col] != -1) or 
+                            (2*row<beamlets[b].shape[0] and 2*col-1<beamlets[b].shape[1] and beamlets[b][2*row][2*col-1] != -1) or
+                            (2*row<beamlets[b].shape[0] and 2*col<beamlets[b].shape[1] and beamlets[b][2*row][2*col] != -1)):
                             approximation = np.zeros(num_of_beamlets)
                             horizontal = np.zeros(num_of_beamlets)
-                            for i in range(inf_matrix.beamlets_dict[ind]['start_beamlet'], inf_matrix.beamlets_dict[ind]['end_beamlet'] + 1):
-                                approximation[i] = approximation_coeffs[index_position[i]]
-                                horizontal[i] = horizontal_coeffs[index_position[i]]
+                            for ind in range(inf_matrix.beamlets_dict[b]['start_beamlet'], inf_matrix.beamlets_dict[b]['end_beamlet'] + 1):
+                                approximation[ind] = approximation_coeffs[index_position[ind]]
+                                horizontal[ind] = horizontal_coeffs[index_position[ind]]
                             low_dim_basis.append(np.stack((approximation, horizontal)))
                     beamlet_2d_grid[row][col] = 0
-        return np.transpose(np.concatenate(low_dim_basis, axis=0))
+        low_dim_basis = np.transpose(np.concatenate(low_dim_basis, axis=0))
+        u, s, vh = scipy.sparse.linalg.svds(low_dim_basis, k = min(low_dim_basis.shape[0], low_dim_basis.shape[1]) - 1)
+        ind = np.where(s > 0.0001)
+        return u[:, ind[0]]
     
     @staticmethod
     def run_IMRT_fluence_map_low_dim(my_plan: Plan, inf_matrix: InfluenceMatrix = None, solver: str = 'MOSEK',
@@ -175,12 +181,9 @@ class LowDimRT:
 
         # creating the wavelet incomplete basis representing a low dimensional subspace for dimension reduction
         wavelet_basis = LowDimRT.get_low_dim_basis(inf_matrix, 'wavelet')
-        u, s, vh = scipy.sparse.linalg.svds(wavelet_basis, k=min(wavelet_basis.shape[0], wavelet_basis.shape[1]) - 1)
         # Smoothness Constraint
-        ind = np.where(s > 0.0001)
-        new_u = u[:, ind[0]]
-        y = cp.Variable(new_u.shape[1])
-        constraints += [new_u @ y == x]
+        y = cp.Variable(wavelet_basis.shape[1])
+        constraints += [wavelet_basis @ y == x]
 
         print('Constraints Done')
 
