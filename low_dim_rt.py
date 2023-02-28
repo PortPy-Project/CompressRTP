@@ -47,9 +47,9 @@ class LowDimRT:
                     approximation_coeffs = pywt.idwt2((beamlet_2d_grid, (None, None, None)), 'sym4', mode='periodization')
                     horizontal_coeffs = pywt.idwt2((None, (beamlet_2d_grid, None, None)), 'sym4', mode='periodization')
                     for b in range(num_of_beams):
-                        if ((2*row-1<beamlets[b].shape[0] and 2*col-1<beamlets[b].shape[1] and beamlets[b][2*row-1][2*col-1] != -1) or 
-                            (2*row-1<beamlets[b].shape[0] and 2*col<beamlets[b].shape[1] and beamlets[b][2*row-1][2*col] != -1) or 
-                            (2*row<beamlets[b].shape[0] and 2*col-1<beamlets[b].shape[1] and beamlets[b][2*row][2*col-1] != -1) or
+                        if ((2*row+1<beamlets[b].shape[0] and 2*col+1<beamlets[b].shape[1] and beamlets[b][2*row+1][2*col+1] != -1) or 
+                            (2*row+1<beamlets[b].shape[0] and 2*col<beamlets[b].shape[1] and beamlets[b][2*row+1][2*col] != -1) or 
+                            (2*row<beamlets[b].shape[0] and 2*col+1<beamlets[b].shape[1] and beamlets[b][2*row][2*col+1] != -1) or
                             (2*row<beamlets[b].shape[0] and 2*col<beamlets[b].shape[1] and beamlets[b][2*row][2*col] != -1)):
                             approximation = np.zeros(num_of_beamlets)
                             horizontal = np.zeros(num_of_beamlets)
