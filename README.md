@@ -8,10 +8,10 @@ The optimization problems arising in radiation therapy also suffer from the curs
 
 The key dimensionality reduction idea in the wavelet-induced smoothness project is that the beamlet intensity maps are lying in a low-dimensional subspace of all possible intensity maps since they  need to be smooth (to reduce the plan complexity, an unnecessary modulation, and improve the plan delivery efficiency). We propose representing the beamlet intensities using an incomplete wavelet basis of low-frequency wavelets that explicitly excludes fluctuating intensity maps from the decision space (explicit hard constraint). This technique provides a built-in wavelet-induced smoothness and excludes complex and clinically irrelevant radiation plans from the search space that improves both dosimetric plan quality and delivery efficiency. 
 
-From the implementation perspective, the proposed technique can be easily integrated with any optimization approach by simply adding a set of linear constraints in the form of (x=Wy), where x represents the beamlet intensity, W is the matrix including low-frequency wavelets (can be generated using method get_low_dim_basis in the code), and y is a free variable.
+From the implementation perspective, the current tool is an add-on for the PortPy project. However, the proposed technique can be easily integrated with any optimization approach by simply adding a set of linear constraints in the form of (_x=Wy_), where _x_ represents the beamlet intensity, _W_ is the matrix including low-frequency wavelets (can be generated using method `get_low_dim_basis` in the code), and _y_ is a free variable.
 
 ## License
-LowDimRT code is distributed under **Apache License 2.0**, and is available for non-commercial academic purposes.
+LowDimRT code is distributed under **Apache License 2.0 with Commons Clause**, and is available for non-commercial academic purposes.
 
 ## Team
 1. [Mojtaba Tefagh](https://mtefagh.github.io/) ([Sharif University of Technology](https://en.sharif.edu/))
