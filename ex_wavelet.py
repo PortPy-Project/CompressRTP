@@ -3,7 +3,7 @@
     This example shows creating and modification of wavelet bases for fluence map compression using portpy
 
 """
-import portpy_photon as pp
+import portpy.photon as pp
 from low_dim_rt import LowDimRT
 import numpy as np
 import cvxpy as cp
@@ -13,9 +13,9 @@ import matplotlib.pyplot as plt
 def ex_wavelet():
     # specify the patient data location
     # you first need to download the patient database from the link provided in the PortPy GitHub page
-    data_dir = r'..\data'
+    data_dir = r'F:\Research\Data_newformat\Python-PORT\data'
     # pick a patient from the existing patient list to get detailed info about the patient data (e.g., beams_dict, structures, ...)
-    patient_id = 'Lung_Patient_1'
+    patient_id = 'Lung_Patient_2'
     # create my_plan object for the planner beams_dict and select among the beams which are 30 degrees apart
     # for the customized beams_dict, you can pass the argument beam_ids
     my_plan = pp.Plan(patient_id, data_dir)

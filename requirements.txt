@@ -1,2 +1,2 @@
-portpy-photon>=0.0.5
-PyWavelets>=1.4.1
+portpy>=0.0.1
+PyWavelets>=1.4.0

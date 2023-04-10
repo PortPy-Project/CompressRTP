@@ -3,9 +3,9 @@ import time
 import scipy
 import numpy as np
 import cvxpy as cp
-from portpy_photon.plan import Plan
-from portpy_photon.optimization import Optimization
-from portpy_photon.influence_matrix import InfluenceMatrix
+from portpy.photon.plan import Plan
+from portpy.photon.optimization import Optimization
+from portpy.photon.influence_matrix import InfluenceMatrix
 
 
 class LowDimRT:
