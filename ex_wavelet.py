@@ -3,6 +3,8 @@
     This example shows creating and modification of wavelet bases for fluence map compression using portpy
 
 """
+# import sys
+# sys.path.append('..')
 import portpy.photon as pp
 from low_dim_rt import LowDimRT
 import numpy as np
@@ -13,7 +15,7 @@ import matplotlib.pyplot as plt
 def ex_wavelet():
     # specify the patient data location
     # you first need to download the patient database from the link provided in the PortPy GitHub page
-    data_dir = r'F:\Research\Data_newformat\Python-PORT\data'
+    data_dir = r'.\data'
     # pick a patient from the existing patient list to get detailed info about the patient data (e.g., beams_dict, structures, ...)
     patient_id = 'Lung_Patient_2'
     # create my_plan object for the planner beams_dict and select among the beams which are 30 degrees apart
@@ -34,70 +36,75 @@ def ex_wavelet():
                     'max_dose_gy': rind_max_dose[4]}]
     my_plan.add_rinds(rind_params=rind_params)
 
-    # create cvxpy problem using the clinical criteria
-    prob = pp.CvxPyProb(my_plan, opt_params={'smoothness_weight': 10})
-
-    # run imrt fluence map optimization using cvxpy and one of the supported solvers and save the optimal solution in sol
-    # CVXPy supports several opensource (ECOS, OSQP, SCS) and commercial solvers (e.g., MOSEK, GUROBI, CPLEX)
-    # For optimization problems with non-linear objective and/or constraints, MOSEK often performs well
-    # For mixed integer programs, GUROBI/CPLEX are good choices
-    # If you have .edu email address, you can get free academic license for commercial solvers
-    # we recommend the commercial solver MOSEK as your solver for the problems in this example,
-    # however, if you don't have a license, you can try opensource/free solver SCS or ECOS
-    # see https://www.cvxpy.org/tutorial/advanced/index.html for more info about CVXPy solvers
-    # To set up mosek solver, you can get mosek license file using edu account and place the license file in directory C:\Users\username\mosek
-    prob.solve(solver='MOSEK', verbose=True)
-    sol = prob.get_sol()
-
-    # run IMRT fluence map optimization using a low dimensional subspace for fluence map compression
-    prob = pp.CvxPyProb(my_plan, opt_params={'smoothness_weight': 10})
-    # creating the wavelet incomplete basis representing a low dimensional subspace for dimension reduction
-    wavelet_basis = LowDimRT.get_low_dim_basis(my_plan.inf_matrix, 'wavelet')
-    # Smoothness Constraint
-    y = cp.Variable(wavelet_basis.shape[1])
-    prob.constraints += [wavelet_basis @ y == prob.x]
-    prob.solve(solver='MOSEK', verbose=False)
-    sol_low_dim = prob.get_sol()
-
     # With no quadratic smoothness
-    prob = pp.CvxPyProb(my_plan, opt_params={'smoothness_weight': 0})
+    prob = pp.CvxPyProb(my_plan, smoothness_weight=0)
+    prob.solve(solver='MOSEK', verbose=False)
+    sol_no_quad_no_wav = prob.get_sol()
+
     # creating the wavelet incomplete basis representing a low dimensional subspace for dimension reduction
     wavelet_basis = LowDimRT.get_low_dim_basis(my_plan.inf_matrix, 'wavelet')
     # Smoothness Constraint
     y = cp.Variable(wavelet_basis.shape[1])
     prob.constraints += [wavelet_basis @ y == prob.x]
     prob.solve(solver='MOSEK', verbose=False)
-    sol_low_dim_only = prob.get_sol()
+    sol_no_quad_with_wav = prob.get_sol()
+
+    # create cvxpy problem using the clinical criteria
+    prob = pp.CvxPyProb(my_plan, smoothness_weight=10)
+    # run IMRT fluence map optimization using a low dimensional subspace for fluence map compression
+    prob.solve(solver='MOSEK', verbose=False)
+    sol_quad_no_wav = prob.get_sol()
+
+    # Smoothness Constraint
+    y = cp.Variable(wavelet_basis.shape[1])
+    prob.constraints += [wavelet_basis @ y == prob.x]
+    prob.solve(solver='MOSEK', verbose=False)
+    sol_quad_with_wav = prob.get_sol()
+
+    pp.save_plan(my_plan, plan_name='my_plan', path=r'C:\temp')
+    pp.save_optimal_sol(sol_no_quad_no_wav, sol_name='sol_no_quad_no_wav', path=r'C:\temp')
+    pp.save_optimal_sol(sol_no_quad_with_wav, sol_name='sol_no_quad_with_wav', path=r'C:\temp')
+    pp.save_optimal_sol(sol_quad_no_wav, sol_name='sol_quad_no_wav', path=r'C:\temp')
+    pp.save_optimal_sol(sol_quad_with_wav, sol_name='sol_quad_with_wav', path=r'C:\temp')
+
+    # my_plan = pp.load_plan(plan_name='my_plan', path=r'C:\temp')
+    # sol_no_quad_no_wav = pp.load_optimal_sol(sol_name='sol_no_quad_no_wav', path=r'C:\temp')
+    # sol_no_quad_with_wav = pp.load_optimal_sol(sol_name='sol_no_quad_with_wav', path=r'C:\temp')
+    # sol_quad_no_wav = pp.load_optimal_sol(sol_name='sol_quad_no_wav', path=r'C:\temp')
+    # sol_quad_with_wav = pp.load_optimal_sol(sol_name='sol_quad_with_wav', path=r'C:\temp')
 
     # plot fluence 3D and 2D
-    fig, ax = plt.subplots(1, 3, figsize=(12, 12), subplot_kw={'projection': '3d'})
-    pp.Visualize.plot_fluence_3d(sol=sol, beam_id=0, ax=ax[0])
-    pp.Visualize.plot_fluence_3d(sol=sol_low_dim, beam_id=0, ax=ax[1])
-    pp.Visualize.plot_fluence_3d(sol=sol_low_dim_only, beam_id=0, ax=ax[2])
+    fig, ax = plt.subplots(1, 2, figsize=(18, 6), subplot_kw={'projection': '3d'})
+    fig.suptitle('Without Quadratic smoothness')
+    pp.Visualize.plot_fluence_3d(sol=sol_no_quad_no_wav, beam_id=37, ax=ax[0], title='Without Wavelet')
+    pp.Visualize.plot_fluence_3d(sol=sol_no_quad_with_wav, beam_id=37, ax=ax[1], title='With Wavelet')
+
+    fig, ax = plt.subplots(1, 2, figsize=(18, 6), subplot_kw={'projection': '3d'})
+    fig.suptitle('With Quadratic smoothness')
+    pp.Visualize.plot_fluence_3d(sol=sol_quad_no_wav, beam_id=37, ax=ax[0], title='Without Wavelet')
+    pp.Visualize.plot_fluence_3d(sol=sol_quad_with_wav, beam_id=37, ax=ax[1], title='With Wavelet')
     plt.show()
 
-    fig, ax = plt.subplots(1, 3, figsize=(12, 12))
-    pp.Visualize.plot_fluence_2d(sol=sol, beam_id=0, ax=ax[0])
-    pp.Visualize.plot_fluence_2d(sol=sol_low_dim, beam_id=0, ax=ax[1])
-    pp.Visualize.plot_fluence_2d(sol=sol_low_dim_only, beam_id=0, ax=ax[2])
-    plt.show()
     # plot DVH for the structures in the given list. Default dose_1d is in Gy and volume is in relative scale(%).
-    structs = ['PTV', 'ESOPHAGUS', 'HEART', 'CORD']
-    fig, ax = plt.subplots(figsize=(12, 12))
-    ax = pp.Visualize.plot_dvh(my_plan, sol=sol, structs=structs, ax=ax)
-    ax = pp.Visualize.plot_dvh(my_plan, sol=sol_low_dim, structs=structs, ax=ax)
-    pp.Visualize.plot_dvh(my_plan, sol=sol_low_dim_only, structs=structs, ax=ax)
+    structs = ['PTV', 'ESOPHAGUS', 'HEART', 'CORD', 'LUNG_L', 'LUNG_R']
+    fig, ax = plt.subplots(1, 2, figsize=(20, 8))
+    ax0 = pp.Visualize.plot_dvh(my_plan, sol=sol_no_quad_no_wav, structs=structs, style='solid', ax=ax[0])
+    ax0 = pp.Visualize.plot_dvh(my_plan, sol=sol_no_quad_with_wav, structs=structs, style='dashed', ax=ax0)
+    fig.suptitle('DVH comparison')
+    ax0.set_title('Without Quadratic smoothness \n solid: Without Wavelet, Dash: With Wavelet')
+    # plt.show()
+    # print('\n\n')
+
+    # fig, ax = plt.subplots(figsize=(12, 8))
+    ax1 = pp.Visualize.plot_dvh(my_plan, sol=sol_quad_no_wav, structs=structs, style='solid', ax=ax[1])
+    ax1 = pp.Visualize.plot_dvh(my_plan, sol=sol_quad_with_wav, structs=structs, style='dashed', ax=ax1)
+    ax1.set_title('With Quadratic smoothness \n solid: Without Wavelet, Dash: With Wavelet')
     plt.show()
-    # plot 2d axial slice for the given solution and display the structures contours on the slice
-    fig, ax = plt.subplots(1, 3, figsize=(12, 12))
-    pp.Visualize.plot_2d_dose(my_plan, sol=sol, slice_num=40, structs=['PTV'], ax=ax[0])
-    pp.Visualize.plot_2d_dose(my_plan, sol=sol_low_dim, slice_num=40, structs=['PTV'], ax=ax[1])
-    pp.Visualize.plot_2d_dose(my_plan, sol=sol_low_dim_only, slice_num=40, structs=['PTV'], ax=ax[2])
-    plt.show()
+
     # visualize plan metrics based upon clinical criteria
-    pp.Visualize.plan_metrics(my_plan, sol=sol)
-    pp.Visualize.plan_metrics(my_plan, sol=sol_low_dim)
-    pp.Visualize.plan_metrics(my_plan, sol=sol_low_dim_only)
+    pp.Visualize.plan_metrics(my_plan,
+                              sol=[sol_no_quad_no_wav, sol_no_quad_with_wav, sol_quad_no_wav, sol_quad_with_wav],
+                              sol_names=['no_quad_no_wav', 'no_quad_with_wav', 'quad_no_wav', 'quad_with_wav'])
 
 
 if __name__ == "__main__":
