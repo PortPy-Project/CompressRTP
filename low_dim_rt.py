@@ -29,13 +29,14 @@ class LowDimRT:
         :type compression: str
         :return: a list that contains the dimension reduction basis in the format of array(float)
         """
+        low_dim_basis = {}
         num_of_beams = len(inf_matrix.beamlets_dict)
-        low_dim_basis = list()
+        num_of_beamlets = inf_matrix.beamlets_dict[num_of_beams - 1]['end_beamlet'] + 1
         beam_id = [inf_matrix.beamlets_dict[i]['beam_id'] for i in range(num_of_beams)]
         beamlets = inf_matrix.get_bev_2d_grid(beam_id=beam_id)
         index_position = list()
-        num_of_beamlets = inf_matrix.beamlets_dict[num_of_beams - 1]['end_beamlet'] + 1
         for ind in range(num_of_beams):
+            low_dim_basis[beam_id[ind]] = []
             for i in range(inf_matrix.beamlets_dict[ind]['start_beamlet'],
                            inf_matrix.beamlets_dict[ind]['end_beamlet'] + 1):
                 index_position.append((np.where(beamlets[ind] == i)[0][0], np.where(beamlets[ind] == i)[1][0]))
@@ -64,9 +65,11 @@ class LowDimRT:
                                              inf_matrix.beamlets_dict[b]['end_beamlet'] + 1):
                                 approximation[ind] = approximation_coeffs[index_position[ind]]
                                 horizontal[ind] = horizontal_coeffs[index_position[ind]]
-                            low_dim_basis.append(np.stack((approximation, horizontal)))
+                            low_dim_basis[beam_id[b]].append(np.transpose(np.stack([approximation, horizontal])))
                     beamlet_2d_grid[row][col] = 0
-        low_dim_basis = np.transpose(np.concatenate(low_dim_basis, axis=0))
-        u, s, vh = scipy.sparse.linalg.svds(low_dim_basis, k=min(low_dim_basis.shape[0], low_dim_basis.shape[1]) - 1)
-        ind = np.where(s > 0.0001)
-        return u[:, ind[0]]
+        for b in beam_id:
+            low_dim_basis[b] = np.concatenate(low_dim_basis[b], axis=1)
+            u, s, vh = scipy.sparse.linalg.svds(low_dim_basis[b], k=min(low_dim_basis[b].shape[0], low_dim_basis[b].shape[1]) - 1)
+            ind = np.where(s > 0.0001)
+            low_dim_basis[b] = u[:, ind[0]]
+        return np.concatenate([low_dim_basis[b] for b in beam_id], axis=1)
