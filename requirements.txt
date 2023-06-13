@@ -1,2 +1,2 @@
-portpy>=0.0.2
+portpy>=0.0.3
 PyWavelets>=1.4.0
