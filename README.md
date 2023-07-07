@@ -19,4 +19,17 @@ LowDimRT code is distributed under **Apache License 2.0 with Commons Clause**, a
 3. [Gourav Jhanwar](https://github.com/gourav3017) ([Memorial Sloan Kettering Cancer Center](https://www.mskcc.org/))
 
 ## Reference 
-* [1] Tefagh, Mojtaba, and Masoud Zarepisheh. “Built-in Wavelet-Induced Smoothness to Reduce Plan Complexity in Intensity Modulated Radiation Therapy (IMRT).” _Physics in Medicine and Biology_ (2023). DOI: [10.1088/1361-6560/acbefe](https://doi.org/10.1088/1361-6560/acbefe)
+If you find our work useful in your research or if you use parts of this code, please cite the following paper:
+```
+@article{tefagh2023built,
+  title={Built-in wavelet-induced smoothness to reduce plan complexity in intensity modulated radiation therapy (IMRT)},
+  author={Tefagh, Mojtaba and Zarepisheh, Masoud},
+  journal={Physics in Medicine \& Biology},
+  volume={68},
+  number={6},
+  pages={065013},
+  year={2023},
+  publisher={IOP Publishing}
+}
+```
+
