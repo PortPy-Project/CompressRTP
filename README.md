@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./images/LowDimRT.png.png" width="70%" height="40%">
+</p>
+
 # LowDimRT
 
 #### Note: The package is at its early stages of development. At this point, we're only including our recent work [1] where we used wavelets to induce fluence smoothness. This work was originally written in Matlab.
