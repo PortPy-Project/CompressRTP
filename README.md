@@ -1,6 +1,6 @@
 <h1 align="center">
-  <img src="./images/LowDimRT.png" width="300">
-</h1><br>
+  <img src="./images/LowDimRT.png" width=70% height="40%">
+</h1>
 
 # LowDimRT
 
