@@ -31,14 +31,14 @@ class LowDimRT:
         """
         low_dim_basis = {}
         num_of_beams = len(inf_matrix.beamlets_dict)
-        num_of_beamlets = inf_matrix.beamlets_dict[num_of_beams - 1]['end_beamlet'] + 1
+        num_of_beamlets = inf_matrix.beamlets_dict[num_of_beams - 1]['end_beamlet_idx'] + 1
         beam_id = [inf_matrix.beamlets_dict[i]['beam_id'] for i in range(num_of_beams)]
         beamlets = inf_matrix.get_bev_2d_grid(beam_id=beam_id)
         index_position = list()
         for ind in range(num_of_beams):
             low_dim_basis[beam_id[ind]] = []
-            for i in range(inf_matrix.beamlets_dict[ind]['start_beamlet'],
-                           inf_matrix.beamlets_dict[ind]['end_beamlet'] + 1):
+            for i in range(inf_matrix.beamlets_dict[ind]['start_beamlet_idx'],
+                           inf_matrix.beamlets_dict[ind]['end_beamlet_idx'] + 1):
                 index_position.append((np.where(beamlets[ind] == i)[0][0], np.where(beamlets[ind] == i)[1][0]))
         if compression == 'wavelet':
             max_dim_0 = np.max([beamlets[ind].shape[0] for ind in range(num_of_beams)])
@@ -61,8 +61,8 @@ class LowDimRT:
                                  beamlets[b][2 * row][2 * col] != -1)):
                             approximation = np.zeros(num_of_beamlets)
                             horizontal = np.zeros(num_of_beamlets)
-                            for ind in range(inf_matrix.beamlets_dict[b]['start_beamlet'],
-                                             inf_matrix.beamlets_dict[b]['end_beamlet'] + 1):
+                            for ind in range(inf_matrix.beamlets_dict[b]['start_beamlet_idx'],
+                                             inf_matrix.beamlets_dict[b]['end_beamlet_idx'] + 1):
                                 approximation[ind] = approximation_coeffs[index_position[ind]]
                                 horizontal[ind] = horizontal_coeffs[index_position[ind]]
                             low_dim_basis[beam_id[b]].append(np.transpose(np.stack([approximation, horizontal])))
