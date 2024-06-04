@@ -20,11 +20,11 @@ def ex_wavelet():
     #  Note: you first need to download the patient database from the link provided in the GitHub page.
 
     # specify the patient data location.
-    data_dir = r'../data'
+    data_dir = r'\\pisiz3echo\ECHO\Research\Data_newformat\PortPy\data'
 
     # Use PortPy DataExplorer class to explore PortPy data and pick one of the patient
     data = pp.DataExplorer(data_dir=data_dir)
-    patient_id = 'Lung_Patient_2'
+    patient_id = 'Lung_Patient_3'
     data.patient_id = patient_id
 
     # Load ct and structure set for the above patient using CT and Structures class
@@ -61,7 +61,7 @@ def ex_wavelet():
             opt_params['objective_functions'][i]['weight'] = 0
 
     # create a plan using ct, structures, beams and influence matrix. Clinical criteria is optional
-    my_plan = pp.Plan(ct, structs, beams, inf_matrix, clinical_criteria)
+    my_plan = pp.Plan(ct=ct, structs=structs, beams=beams, inf_matrix=inf_matrix, clinical_criteria=clinical_criteria)
 
     # create cvxpy problem using the clinical criteria and optimization parameters
     opt = pp.Optimization(my_plan, opt_params=opt_params)
