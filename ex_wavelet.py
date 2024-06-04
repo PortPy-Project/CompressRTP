@@ -20,7 +20,7 @@ def ex_wavelet():
     #  Note: you first need to download the patient database from the link provided in the GitHub page.
 
     # specify the patient data location.
-    data_dir = r'\\pisiz3echo\ECHO\Research\Data_newformat\PortPy\data'
+    data_dir = r'..\data'
 
     # Use PortPy DataExplorer class to explore PortPy data and pick one of the patient
     data = pp.DataExplorer(data_dir=data_dir)
