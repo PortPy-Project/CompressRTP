@@ -5,7 +5,7 @@
 """
 
 import portpy.photon as pp
-from compress_rtp.compress_rtp_optimization import CompressRTPOptimization
+from compress_rtp.utils.get_low_dim_basis import get_low_dim_basis
 import cvxpy as cp
 import matplotlib.pyplot as plt
 
@@ -64,14 +64,14 @@ def ex_wavelet():
     my_plan = pp.Plan(ct=ct, structs=structs, beams=beams, inf_matrix=inf_matrix, clinical_criteria=clinical_criteria)
 
     # create cvxpy problem using the clinical criteria and optimization parameters
-    opt = CompressRTPOptimization(my_plan, opt_params=opt_params)
+    opt = pp.Optimization(my_plan, opt_params=opt_params)
     opt.create_cvxpy_problem()
     sol_no_quad_no_wav = opt.solve(solver='MOSEK', verbose=False)
 
     # - With wavelet constraint
 
     # creating the wavelet incomplete basis representing a low dimensional subspace for dimension reduction
-    wavelet_basis = opt.get_low_dim_basis()
+    wavelet_basis = get_low_dim_basis(inf_matrix=inf_matrix, compression='wavelet')
     # Smoothness Constraint
     y = cp.Variable(wavelet_basis.shape[1])
     opt.constraints += [wavelet_basis @ y == opt.vars['x']]
@@ -88,7 +88,7 @@ def ex_wavelet():
             opt_params['objective_functions'][i]['weight'] = 10
 
     # create cvxpy problem using the clinical criteria and optimization parameters
-    opt = CompressRTPOptimization(my_plan, opt_params=opt_params)
+    opt = pp.Optimization(my_plan, opt_params=opt_params)
     opt.create_cvxpy_problem()
 
     sol_quad_no_wav = opt.solve(solver='MOSEK', verbose=False)
@@ -154,7 +154,7 @@ def ex_wavelet():
     
     '''
     # visualize plan metrics based upon clinical criteria
-    pp.Evaluation.plan_metrics(my_plan,
+    pp.Evaluation.display_clinical_criteria(my_plan,
                               sol=[sol_no_quad_no_wav, sol_no_quad_with_wav, sol_quad_no_wav, sol_quad_with_wav],
                               sol_names=['no_quad_no_wav', 'no_quad_with_wav', 'quad_no_wav', 'quad_with_wav'])
 

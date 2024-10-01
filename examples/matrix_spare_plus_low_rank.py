@@ -6,10 +6,9 @@ This example demonstrates compressed planning based on a sparse-plus-low-rank ma
 import os
 import portpy.photon as pp
 from compress_rtp.compress_rtp_optimization import CompressRTPOptimization
+from compress_rtp.utils.get_sparse_plus_low_rank import get_sparse_plus_low_rank
 import matplotlib.pyplot as plt
 from copy import deepcopy
-import numpy as np
-import scipy
 
 
 def sparse_plus_low_rank():
@@ -25,7 +24,7 @@ def sparse_plus_low_rank():
     data = pp.DataExplorer(data_dir=data_dir)
 
     # pick a patient from the existing patient list to get detailed info (e.g., beam angles, structures).
-    data.patient_id = 'Lung_Patient_3'
+    data.patient_id = 'Lung_Patient_2'
 
     ct = pp.CT(data)
     structs = pp.Structures(data)
@@ -71,9 +70,7 @@ def sparse_plus_low_rank():
     # run optimization with naive thresold of 1% of max(A) and no low rank
     # create cvxpy problem using the clinical criteria and optimization parameters
     A = deepcopy(inf_matrix.A)
-    tol = np.max(A) * 1 * 0.01
-    S = np.where(A > tol, A, 0)
-    S = scipy.sparse.csr_matrix(S)
+    S = get_sparse_plus_low_rank(A=A, thresold_perc=1, rank=0)
     inf_matrix.A = S
     opt = pp.Optimization(my_plan, inf_matrix=inf_matrix, opt_params=opt_params)
     opt.create_cvxpy_problem()
@@ -81,8 +78,8 @@ def sparse_plus_low_rank():
 
     # run optimization with thresold of 1% and rank 5
     # create cvxpy problem using the clinical criteria and optimization parameters
+    S, H, W = get_sparse_plus_low_rank(A=A, thresold_perc=1, rank=5)
     opt = CompressRTPOptimization(my_plan, opt_params=opt_params)
-    S, H, W = opt.get_sparse_plus_low_rank(A=A, thresold_perc=1, rank=5)
     opt.create_cvxpy_problem_compressed(S=S, H=H, W=W)
 
     # run imrt fluence map optimization using cvxpy and one of the supported solvers and save the optimal solution in sol
@@ -95,22 +92,19 @@ def sparse_plus_low_rank():
 
     """
 
-    fig, ax = plt.subplots(figsize=(12, 8))
+    fig, ax = plt.subplots(1, 2, figsize=(20, 8))
     struct_names = ['PTV', 'ESOPHAGUS', 'HEART', 'CORD', 'LUNGS_NOT_GTV']
     dose_1d_sparse = (S @ sol_sparse['optimal_intensity']) * my_plan.get_num_of_fractions()
-    dose_1d_full = (A @ sol_sparse['optimal_intensity']) * my_plan.get_num_of_fractions()
-    ax = pp.Visualization.plot_dvh(my_plan, dose_1d=dose_1d_sparse, struct_names=struct_names, style='dotted', ax=ax, norm_flag=True)
-    ax = pp.Visualization.plot_dvh(my_plan, dose_1d=dose_1d_full, struct_names=struct_names, style='solid', ax=ax, norm_flag=True)
-    ax.set_title("sparse_vs_full")
-    plt.show(block=False)
+    dose_1d_full_sparse = (A @ sol_sparse['optimal_intensity']) * my_plan.get_num_of_fractions()
+    ax0 = pp.Visualization.plot_dvh(my_plan, dose_1d=dose_1d_sparse, struct_names=struct_names, style='dotted', ax=ax[0], norm_flag=True)
+    ax0 = pp.Visualization.plot_dvh(my_plan, dose_1d=dose_1d_full_sparse, struct_names=struct_names, style='solid', ax=ax0, norm_flag=True)
+    ax0.set_title("sparse_vs_full")
 
-    fig, ax = plt.subplots(figsize=(12, 8))
-    struct_names = ['PTV', 'ESOPHAGUS', 'HEART', 'CORD', 'LUNGS_NOT_GTV']
     dose_1d_slr = (S @ sol_slr['optimal_intensity'] + H @ (W @ sol_slr['optimal_intensity'])) * my_plan.get_num_of_fractions()
-    dose_1d_full = (A @ sol_slr['optimal_intensity']) * my_plan.get_num_of_fractions()
-    ax = pp.Visualization.plot_dvh(my_plan, dose_1d=dose_1d_slr, struct_names=struct_names, style='dashed', ax=ax, norm_flag=True)
-    ax = pp.Visualization.plot_dvh(my_plan, dose_1d=dose_1d_full, struct_names=struct_names, style='solid', ax=ax, norm_flag=True)
-    ax.set_title("slr_vs_full")
+    dose_1d_full_slr = (A @ sol_slr['optimal_intensity']) * my_plan.get_num_of_fractions()
+    ax1 = pp.Visualization.plot_dvh(my_plan, dose_1d=dose_1d_slr, struct_names=struct_names, style='dashed', ax=ax[1], norm_flag=True)
+    ax1 = pp.Visualization.plot_dvh(my_plan, dose_1d=dose_1d_full_slr, struct_names=struct_names, style='solid', ax=ax1, norm_flag=True)
+    ax1.set_title("slr_vs_full")
     plt.show(block=False)
 
     """ 
@@ -122,7 +116,7 @@ def sparse_plus_low_rank():
     """
 
     # visualize plan metrics based upon clinical criteria
-    pp.Evaluation.display_clinical_criteria(my_plan, dose_1d=[dose_1d_sparse, dose_1d_slr], in_browser=True)
+    pp.Evaluation.display_clinical_criteria(my_plan, dose_1d=[dose_1d_full_sparse, dose_1d_full_slr], sol_names=['Without compression', 'With compression'])
 
     """ 
     5) saving and loading the plan for future use (utils) 
