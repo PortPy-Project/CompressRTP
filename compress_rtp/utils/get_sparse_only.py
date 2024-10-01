@@ -3,7 +3,15 @@ import math
 import scipy
 
 
-def get_sparse_only(matrix, threshold_perc, compression='naive'):
+def get_sparse_only(matrix: np.ndarray, threshold_perc: float = 1, compression: str = 'naive'):
+    """
+    Get sparse matrix using threshold and different methods
+    :param matrix: matrix to be sparsified
+    :param threshold_perc: threshold for matrix sparsification
+    :param compression: Method of Sparsification
+
+    :return: Sparse influence matrix
+    """
     threshold = np.max(matrix) * threshold_perc*0.01
     if compression == 'rmr':
         copy_matrix = matrix.copy()
