@@ -77,7 +77,7 @@ def matrix_sparse_only_rmr():
 
     # run optimization with thresold of 1% and sparsifying matrix using RMR method
     # create cvxpy problem using the clinical criteria and optimization parameters
-    S_rmr = get_sparse_only(matrix=A, threshold_perc=1, compression='rmr')
+    S_rmr = get_sparse_only(matrix=A, threshold_perc=10, compression='rmr')
     inf_matrix.A = S_rmr
     opt = pp.Optimization(my_plan, inf_matrix=inf_matrix, opt_params=opt_params)
     opt.create_cvxpy_problem()

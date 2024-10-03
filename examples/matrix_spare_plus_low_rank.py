@@ -7,6 +7,7 @@ import os
 import portpy.photon as pp
 from compress_rtp.compress_rtp_optimization import CompressRTPOptimization
 from compress_rtp.utils.get_sparse_plus_low_rank import get_sparse_plus_low_rank
+from compress_rtp.utils.get_sparse_only import get_sparse_only
 import matplotlib.pyplot as plt
 from copy import deepcopy
 
@@ -70,7 +71,9 @@ def sparse_plus_low_rank():
     # run optimization with naive thresold of 1% of max(A) and no low rank
     # create cvxpy problem using the clinical criteria and optimization parameters
     A = deepcopy(inf_matrix.A)
-    S = get_sparse_plus_low_rank(A=A, thresold_perc=1, rank=0)
+    S = get_sparse_only(matrix=A, threshold_perc=1)
+    # Users can also use below method to get sparse matrix using threshold. Rank=0 is equivalent to above method
+    # S = get_sparse_plus_low_rank(A=A, thresold_perc=1, rank=0)
     inf_matrix.A = S
     opt = pp.Optimization(my_plan, inf_matrix=inf_matrix, opt_params=opt_params)
     opt.create_cvxpy_problem()
