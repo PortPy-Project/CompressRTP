@@ -1,6 +1,6 @@
 """
 
-This example demonstrates compressed planning based on a sparse-plus-low-rank matrix compression technique:
+This example demonstrates compressed planning based on a RMR matrix compression technique:
 
 """
 import os
