@@ -114,7 +114,7 @@ Decomposing a matrix into the sum of a sparse matrix and a low-rank matrix has f
 
 **Implementation in PortPy:**
 
-In PortPy, you can apply the sparse-plus-low-rank compression using the following lines of code. Unlike the sparse-only compression using RMR, which did not require any changes other than replacing $𝐴x$ with $𝑆x$ in your optimization formulation and code, this compression requires adding a linear constraint $y=𝑊x$ and replacing $Ax$ with $𝑆x+Hy$. These changes can be easily implemented using CVXPy (see the [Sparse-Plus-Low-Rank Matrix Compression](https://github.com/PortPy-Project/CompressRTP/blob/main/examples/matrix_sparse_plus_low_rank.ipynb) for details).
+In PortPy, you can apply the sparse-plus-low-rank compression using the following lines of code. Unlike the sparse-only compression using RMR, which did not require any changes other than replacing $𝐴x$ with $𝑆x$ in your optimization formulation and code, this compression requires adding a linear constraint $y=𝑊x$ and replacing $Ax$ with $𝑆x+Hy$. These changes can be easily implemented using CVXPy (see the [Sparse-Plus-Low-Rank Jupyter Notebook](https://github.com/PortPy-Project/CompressRTP/blob/main/examples/matrix_sparse_plus_low_rank.ipynb) for details).
 
 ```python
 from compress_rtp.utils.get_sparse_plus_low_rank import get_sparse_plus_low_rank
@@ -158,7 +158,7 @@ opt.constraints += [W @ y == opt.vars['x']]
 CompressRTP code is distributed under **Apache License 2.0 with Commons Clause**, and is available for non-commercial academic purposes.
 
 ## Reference 
-If you find our work useful in your research or if you use parts of this code, please cite the following paper:
+
 ```
 
 @article{Adeli2024Randomized,
