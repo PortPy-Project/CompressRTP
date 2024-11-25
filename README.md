@@ -154,6 +154,16 @@ y = cp.Variable(W.shape[1])
 opt.constraints += [W @ y == opt.vars['x']]
 ```
 
+# Team <a name="Team"></a>
+PortPy is a community project initiated at [Memorial Sloan Kettering Cancer Center](https://www.mskcc.org/). It is currently developed and maintained by:
+
+| Name                                                                         | Expertise                                        | Institution                            |
+|------------------------------------------------------------------------------|--------------------------------------------------|----------------------------------------|
+| [Mojtaba Tefagh](https://www.ed.ac.uk/profile/mojtaba-tefagh)                | Mathematical Modeling and Reinforcement Learning | University of Edinburgh, Scotland      |
+| [Gourav Jhanwar](https://github.com/gourav3017)                              | Algorithm Design and Development                 | Memorial Sloan Kettering Cancer Center |
+| [Masoud Zarepisheh](https://masoudzp.github.io/)                             | Treatment Planning and Optimization              | Memorial Sloan Kettering Cancer Center |
+
+
 ## License
 CompressRTP code is distributed under **Apache License 2.0 with Commons Clause**, and is available for non-commercial academic purposes.
 
