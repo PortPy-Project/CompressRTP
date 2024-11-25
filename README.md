@@ -62,7 +62,7 @@ In our [paper](./images/RMR_NeurIPS_Paper.pdf), we introduced **Randomized Minor
 $𝑆$) remains a near-optimal solution for the original problem. For a detailed mathematical analysis, refer to Theorems 3.6 and 3.9 in our [paper](./images/RMR_NeurIPS_Paper.pdf).
 ​
 <p align="center">
-<img src="./images/RMR.PNG" width="70%" height="40%">
+<img src="./images/RMR_performance.PNG" width="70%" height="40%">
 <p>
 
 **Figure Explanation:** The figure above compares the proposed RMR algorithm with four existing sparsification algorithms in terms of feasibility and optimality gaps. These gaps were calculated by solving both the original and surrogate optimization problems for 10 lung cancer patients, whose data is publicly available on PortPy. The results demonstrate that the RMR algorithm outperforms the existing methods.
