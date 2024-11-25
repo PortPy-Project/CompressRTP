@@ -62,7 +62,7 @@ In our [paper](./images/RMR_NeurIPS_Paper.pdf), we introduced **Randomized Minor
 $𝑆$) remains a near-optimal solution for the original problem. For a detailed mathematical analysis, refer to Theorems 3.6 and 3.9 in our [paper](./images/RMR_NeurIPS_Paper.pdf).
 ​
 <p align="center">
-<img src="./images/RMR.png" width="70%" height="40%">
+<img src="./images/RMR.PNG" width="70%" height="40%">
 <p>
 
 **Figure Explanation:** The figure above compares the proposed RMR algorithm with four existing sparsification algorithms in terms of feasibility and optimality gaps. These gaps were calculated by solving both the original and surrogate optimization problems for 10 lung cancer patients, whose data is publicly available on PortPy. The results demonstrate that the RMR algorithm outperforms the existing methods.
@@ -95,7 +95,7 @@ The rows of matrix $𝐴$ correspond to the patient's voxels, and the similarity
 is **low-rank** and therefore **compressible**. 
 
 <p align="center">
-<img src="./images/SLR.png" width="70%" height="40%">
+<img src="./images/SLR.PNG" width="70%" height="40%">
 <p>
   
 **Figure Explanation:** The low-rank nature of matrix $𝐴$ can be verified by observing the exponential decay of its singular values, as shown by the blue line in the **left figure**. If we decompose matrix 
