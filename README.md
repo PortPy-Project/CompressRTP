@@ -24,7 +24,7 @@ The optimization problems in radiotherapy are highly complex due to the "curse o
 
 Dimensionality reduction and compression have a rich history in statistics and engineering. Recently, these techniques have re-emerged as powerful tools for addressing increasingly high-dimensional problems in fields like big data and machine learning. Our goal is to **adapt and adopt** these versatile methods to **embed high-dimensional** radiotherapy optimization problems into **lower-dimensional spaces** so they can be solved efficiently. A general radiotherapy optimization problem can be formulated as:
 
-$Minimize f(Ax,x)$
+$Minimize \text{ } f(A\mathbf{x},\mathbf{x})$
 
 Subject to $g(Ax,x)\leq 0,x\geq 0$
 ​
@@ -52,7 +52,7 @@ $||𝐴-S||_2$ is small).
 
 In radiotherapy optimization, we can replace the original dense matrix $𝐴$ with this sparse matrix $𝑆$ and solve the following surrogate optimization problem:
 
-$Minimize f(Sx,x)$
+$Minimize \text{ } f(Sx,x)$
 
 Subject to $g(Sx,x)\leq 0,x\geq 0$
 $(S≈A,S$ is sparse, $A$ is dense)
@@ -104,7 +104,7 @@ $𝐴$ into $𝐴=𝑆+𝐿$,  where $𝑆$ is a sparse matrix containing large-
 
 The matrix $𝑆$ is sparse, $𝐻$ is a “tall skinny matrix” with only a few columns, and $𝑊$ is a “wide short matrix” with only a few rows. Therefore, $𝐴≈𝑆+𝐻𝑊$ provides a compressed representation of the data. This allows us to solve the following surrogate problem instead of the original problem
 
-$Minimize f(Sx+Hy,x)$
+$Minimize \text{ } f(Sx+Hy,x)$
 
 Subject to $g(Sx+Hy,x)\leq 0, y=Wx, x\geq 0$
 
