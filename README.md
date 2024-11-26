@@ -1,5 +1,5 @@
 <h1 align="center">
-  <img src="./images/CompressRTPLogo.png" width=70% height="40%">
+  <img src="./images/CompressRTPLogo2.PNG" width=70% height="40%">
 </h1>
 
 
@@ -62,13 +62,13 @@ In our [paper](./images/RMR_NeurIPS_Paper.pdf), we introduced **Randomized Minor
 $𝑆$) remains a near-optimal solution for the original problem. For a detailed mathematical analysis, refer to Theorems 3.6 and 3.9 in our [paper](./images/RMR_NeurIPS_Paper.pdf).
 ​
 <p align="center">
-<img src="./images/RMR_performance.PNG" width="70%" height="40%">
+<img src="./images/RMR_performance.PNG" width="80%" height="50%">
 <p>
 
 **Figure Explanation:** The figure above compares the proposed RMR algorithm with four existing sparsification algorithms in terms of feasibility and optimality gaps. These gaps were calculated by solving both the original and surrogate optimization problems for 10 lung cancer patients, whose data is publicly available on PortPy. The results demonstrate that the RMR algorithm outperforms the existing methods.
 
 <p align="center">
-<img src="./images/RMR_vs_Naive.PNG" width="70%" height="40%">
+<img src="./images/RMR_vs_Naive.PNG" width="80%" height="50%">
 <p>
 
 **Figure Explanation:** The figure above illustrates the discrepancies in Dose Volume Histogram (DVH) plots between the actual dose ($𝐴𝑥$, shown as a solid line) and the approximated dose ($𝑆𝑥$, shown as a dotted line), where 
@@ -95,7 +95,7 @@ The rows of matrix $𝐴$ correspond to the patient's voxels, and the similarity
 is **low-rank** and therefore **compressible**. 
 
 <p align="center">
-<img src="./images/SLR.PNG" width="70%" height="40%">
+<img src="./images/SLR.PNG" width="80%" height="50%">
 <p>
   
 **Figure Explanation:** The low-rank nature of matrix $𝐴$ can be verified by observing the exponential decay of its singular values, as shown by the blue line in the **left figure**. If we decompose matrix 
@@ -131,7 +131,7 @@ To address these challenges, we treat the intensity map of each beam as a **2D i
 
 
 <p align="center">
-<img src="./images/FluenceCompress.PNG" width="70%" height="40%">
+<img src="./images/FluenceCompress.PNG" width="80%" height="50%">
 <p>
 
 **Figure Explanation:** As illustrated in the figure above, the treatment plan achieved using wavelet compression is not only more conformal to the tumor but also less complex. This is evidenced by a smaller duty cycle compared to the plan achieved by adding only a regularization term to the objective function.
