@@ -1,6 +1,6 @@
-<h1 align="center">
+<p align="center">
   <img src="./images/CompressRTPLogo2.PNG" width=70% height="40%">
-</h1>
+</p>
 
 
 <h1 align="center">Compressed Radiation Treatment Planning (CompressRTP)</h1>
