@@ -26,7 +26,7 @@ Dimensionality reduction and compression have a rich history in statistics and e
 
 $Minimize \text{ } f(A\mathbf{x},\mathbf{x})$
 
-Subject to $g(Ax,x)\leq 0,x\geq 0$
+Subject to $g(A\mathbf{x},\mathbf{x})\leq 0,\mathbf{x}\geq 0$
 ​
 
 **CompressRTP** currently addresses the following two issues with this problem:
@@ -48,18 +48,18 @@ Subject to $g(Ax,x)\leq 0,x\geq 0$
 
 ## 1.1) Sparse-Only Matrix Compression
 Matrix sparsification has been extensively studied in the machine learning community for applications such as low-rank approximation and Principal Component Analysis (PCA). This technique is also a key part of an emerging field known as randomized linear algebra. The main idea is to carefully sample and scale elements from the original dense matrix $𝐴$ to create a sparse "sketch" matrix $𝑆$ that closely resembles the characteristics of $𝐴$ (for example, ensuring that 
-$||𝐴-S||_2$ is small).
+$||A-S||_2$ is small).
 
-In radiotherapy optimization, we can replace the original dense matrix $𝐴$ with this sparse matrix $𝑆$ and solve the following surrogate optimization problem:
+In radiotherapy optimization, we can replace the original dense matrix $A$ with this sparse matrix $S$ and solve the following surrogate optimization problem:
 
-$Minimize \text{ } f(Sx,x)$
+$Minimize \text{ } f(S\mathbf{x},\mathbf{x})$
 
-Subject to $g(Sx,x)\leq 0,x\geq 0$
+Subject to $g(S\mathbf{x},\mathbf{x})\leq 0,\mathbf{x}\geq 0$
 $(S≈A,S$ is sparse, $A$ is dense)
 
 
 In our [paper](./images/RMR_NeurIPS_Paper.pdf), we introduced **Randomized Minor Rectification (RMR)**, a simple yet effective matrix sparsification algorithm equiped with robust mathematical properties. The core principle of RMR is to **deterministically retain the large elements of a matrix while probabilistically handling the smaller ones**. Specifically, the RMR algorithm converts a dense matrix $𝐴$ into a sparse matrix $𝑆$ with typically 2–4% non-zero elements. This sparsification ensures that the optimal solution to the surrogate optimization problem (where $𝐴$ is replaced by 
-$𝑆$) remains a near-optimal solution for the original problem. For a detailed mathematical analysis, refer to Theorems 3.6 and 3.9 in our [paper](./images/RMR_NeurIPS_Paper.pdf).
+$S$) remains a near-optimal solution for the original problem. For a detailed mathematical analysis, refer to Theorems 3.6 and 3.9 in our [paper](./images/RMR_NeurIPS_Paper.pdf).
 ​
 <p align="center">
 <img src="./images/RMR_performance.PNG" width="80%" height="50%">
@@ -71,9 +71,9 @@ $𝑆$) remains a near-optimal solution for the original problem. For a detailed
 <img src="./images/RMR_vs_Naive.PNG" width="80%" height="50%">
 <p>
 
-**Figure Explanation:** The figure above illustrates the discrepancies in Dose Volume Histogram (DVH) plots between the actual dose ($𝐴𝑥$, shown as a solid line) and the approximated dose ($𝑆𝑥$, shown as a dotted line), where 
-$𝑥$ is the optimal solution of the surrogate optimization problem. A smaller gap between the dotted and solid lines indicates a more accurate dose approximation. **Left figure** demonstrates a significant dose discrepancy when the matrix 
-$𝐴$ is sparsified by simply zeroing out small elements—a technique commonly used in practice. **Right figure** shows a minimal dose discrepancy when the matrix $𝐴$ is sparsified using the RMR algorithm. Importantly, in both cases, the sparsified matrix contained only 2% non-zero elements. 
+**Figure Explanation:** The figure above illustrates the discrepancies in Dose Volume Histogram (DVH) plots between the actual dose ($A\mathbf{x}$, shown as a solid line) and the approximated dose ($𝑆\mathbf{x}$, shown as a dotted line), where 
+$\mathbf{x}$ is the optimal solution of the surrogate optimization problem. A smaller gap between the dotted and solid lines indicates a more accurate dose approximation. **Left figure** demonstrates a significant dose discrepancy when the matrix 
+$A$ is sparsified by simply zeroing out small elements—a technique commonly used in practice. **Right figure** shows a minimal dose discrepancy when the matrix $A$ is sparsified using the RMR algorithm. Importantly, in both cases, the sparsified matrix contained only 2% non-zero elements. 
 
 
 **Implementation in PortPy:**
@@ -99,14 +99,14 @@ is **low-rank** and therefore **compressible**.
 <p>
   
 **Figure Explanation:** The low-rank nature of matrix $𝐴$ can be verified by observing the exponential decay of its singular values, as shown by the blue line in the **left figure**. If we decompose matrix 
-$𝐴$ into $𝐴=𝑆+𝐿$,  where $𝑆$ is a sparse matrix containing large-magnitude elements (e.g., elements greater than 1% of the maximum value of $𝐴$), and $𝐿$ includes smaller elements mainly representing scattering doses, then the singular values of the scattering matrix $𝐿$ reveal an even sharper exponential decay (depicted by the red line). This suggests the use of “sparse-plus-low-rank” compression, $𝐴≈𝑆+𝐻𝑊$, as schematically shown in the **right figure**. 
+$A$ into $A=S+L$,  where $𝑆$ is a sparse matrix containing large-magnitude elements (e.g., elements greater than 1% of the maximum value of $𝐴$), and $𝐿$ includes smaller elements mainly representing scattering doses, then the singular values of the scattering matrix $𝐿$ reveal an even sharper exponential decay (depicted by the red line). This suggests the use of “sparse-plus-low-rank” compression, $𝐴≈𝑆+𝐻𝑊$, as schematically shown in the **right figure**. 
 
 
-The matrix $𝑆$ is sparse, $𝐻$ is a “tall skinny matrix” with only a few columns, and $𝑊$ is a “wide short matrix” with only a few rows. Therefore, $𝐴≈𝑆+𝐻𝑊$ provides a compressed representation of the data. This allows us to solve the following surrogate problem instead of the original problem
+The matrix $S$ is sparse, $H$ is a “tall skinny matrix” with only a few columns, and $W$ is a “wide short matrix” with only a few rows. Therefore, $A≈S+HW$ provides a compressed representation of the data. This allows us to solve the following surrogate problem instead of the original problem
 
-$Minimize \text{ } f(Sx+Hy,x)$
+$Minimize \text{ } f(S\mathbf{x}+H\mathbf{y},\mathbf{x})$
 
-Subject to $g(Sx+Hy,x)\leq 0, y=Wx, x\geq 0$
+Subject to $g(S\mathbf{x}+H\mathbf{y},\mathbf{x})\leq 0, \mathbf{y}=W\mathbf{x}, \mathbf{x}\geq 0$
 
 Decomposing a matrix into the sum of a sparse matrix and a low-rank matrix has found numerous applications in fields such as computer vision, medical imaging, and statistics. Historically, this structure has been employed as a form of prior knowledge to recover objects of interest that manifest themselves in either the sparse or low-rank components. However, the application presented here represents a novel departure from conventional uses of sparse-plus-low-rank decomposition. Unlike traditional settings where specific components (sparse or low-rank) hold intrinsic importance, our primary goal is not to isolate or interpret these structures. Instead, we leverage them for computationally efficient matrix representation. In this case, the structure serves purely as a tool for optimizing computational efficiency while maintaining data integrity.
 
@@ -114,7 +114,7 @@ Decomposing a matrix into the sum of a sparse matrix and a low-rank matrix has f
 
 **Implementation in PortPy:**
 
-In PortPy, you can apply the sparse-plus-low-rank compression using the following lines of code. Unlike the sparse-only compression using RMR, which did not require any changes other than replacing $𝐴x$ with $𝑆x$ in your optimization formulation and code, this compression requires adding a linear constraint $y=𝑊x$ and replacing $Ax$ with $𝑆x+Hy$. These changes can be easily implemented using CVXPy (see the [Sparse-Plus-Low-Rank Jupyter Notebook](https://github.com/PortPy-Project/CompressRTP/blob/main/examples/matrix_sparse_plus_low_rank.ipynb) for details).
+In PortPy, you can apply the sparse-plus-low-rank compression using the following lines of code. Unlike the sparse-only compression using RMR, which did not require any changes other than replacing $A\mathbf{x}$ with $S\mathbf{x}$ in your optimization formulation and code, this compression requires adding a linear constraint $y=W\mathbf{x}$ and replacing $Ax$ with $S\mathbf{x}+H\mathbf{y}$. These changes can be easily implemented using CVXPy (see the [Sparse-Plus-Low-Rank Jupyter Notebook](https://github.com/PortPy-Project/CompressRTP/blob/main/examples/matrix_sparse_plus_low_rank.ipynb) for details).
 
 ```python
 from compress_rtp.utils.get_sparse_plus_low_rank import get_sparse_plus_low_rank
@@ -123,7 +123,7 @@ S, H, W = get_sparse_plus_low_rank(A=A, threshold_perc=1, rank=5)
 ```
 
 
-## 2) Fluence Compression to Enforce Smoothness on $𝑥$
+## 2) Fluence Compression to Enforce Smoothness on $x$
 
 The fluence smoothness required for efficient and accurate plan delivery is typically achieved by adding an additional "regularization" term to the objective function. This term measures local variations in adjacent beamlets to discourage fluctuating beamlet intensities. However, a significant limitation of this method is its focus on **local complexity** within each beam—it assesses variations between adjacent beamlets but overlooks the **global complexity** of the entire plan. Another challenge is that achieving an optimal balance between plan complexity and dosimetric quality requires careful fine-tuning of the importance weight associated with the smoothness term in the objective function.
 
