@@ -71,7 +71,7 @@ def sparse_plus_low_rank():
     # run optimization with naive thresold of 1% of max(A) and no low rank
     # create cvxpy problem using the clinical criteria and optimization parameters
     A = deepcopy(inf_matrix.A)
-    S = get_sparse_only(matrix=A, threshold_perc=1)
+    S = get_sparse_only(A=A, threshold_perc=1)
     # Users can also use below method to get sparse matrix using threshold. Rank=0 is equivalent to above method
     # S = get_sparse_plus_low_rank(A=A, thresold_perc=1, rank=0)
     inf_matrix.A = S
@@ -81,7 +81,7 @@ def sparse_plus_low_rank():
 
     # run optimization with thresold of 1% and rank 5
     # create cvxpy problem using the clinical criteria and optimization parameters
-    S, H, W = get_sparse_plus_low_rank(A=A, thresold_perc=1, rank=5)
+    S, H, W = get_sparse_plus_low_rank(A=A, threshold_perc=1, rank=5)
     opt = CompressRTPOptimization(my_plan, opt_params=opt_params)
     opt.create_cvxpy_problem_compressed(S=S, H=H, W=W)
 

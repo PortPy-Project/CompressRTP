@@ -1,7 +1,6 @@
 
-from typing import TYPE_CHECKING
-if TYPE_CHECKING:
-    from portpy.photon.influence_matrix import InfluenceMatrix
+
+from portpy.photon.influence_matrix import InfluenceMatrix
 import numpy as np
 import scipy
 try:

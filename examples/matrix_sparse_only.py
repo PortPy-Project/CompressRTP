@@ -69,7 +69,7 @@ def matrix_sparse_only_rmr():
     # run optimization with naive thresold of 1% of max(A) and no low rank
     # create cvxpy problem using the clinical criteria and optimization parameters
     A = deepcopy(inf_matrix.A)
-    S_sparse = get_sparse_only(matrix=A, threshold_perc=1)
+    S_sparse = get_sparse_only(A=A, threshold_perc=1)
     inf_matrix.A = S_sparse
     opt = pp.Optimization(my_plan, inf_matrix=inf_matrix, opt_params=opt_params)
     opt.create_cvxpy_problem()
@@ -77,7 +77,7 @@ def matrix_sparse_only_rmr():
 
     # run optimization with thresold of 1% and sparsifying matrix using RMR method
     # create cvxpy problem using the clinical criteria and optimization parameters
-    S_rmr = get_sparse_only(matrix=A, threshold_perc=10, compression='rmr')
+    S_rmr = get_sparse_only(A=A, threshold_perc=10, compression='rmr')
     inf_matrix.A = S_rmr
     opt = pp.Optimization(my_plan, inf_matrix=inf_matrix, opt_params=opt_params)
     opt.create_cvxpy_problem()

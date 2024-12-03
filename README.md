@@ -84,7 +84,7 @@ If you are using PortPy for your radiotherapy research, you can apply RMR sparsi
 from compress_rtp.utils.get_sparse_only import get_sparse_only
 
 # Apply RMR sparsification to the matrix A
-S = get_sparse_only(matrix=A, threshold_perc=10, compression='rmr')
+S = get_sparse_only(A=A, threshold_perc=10, compression='rmr')
 
 # Replace the original matrix A with the sparsified matrix S
 inf_matrix.A = S

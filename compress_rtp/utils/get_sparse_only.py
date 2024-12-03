@@ -3,23 +3,23 @@ import math
 import scipy
 
 
-def get_sparse_only(matrix: np.ndarray, threshold_perc: float = 1, compression: str = 'naive'):
+def get_sparse_only(A: np.ndarray, threshold_perc: float = 1, compression: str = 'naive'):
     """
     Get sparse matrix using threshold and different methods
-    :param matrix: matrix to be sparsified
+    :param A: matrix to be sparsified
     :param threshold_perc: threshold for matrix sparsification
     :param compression: Method of Sparsification
 
     :return: Sparse influence matrix
     """
-    threshold = np.max(matrix) * threshold_perc*0.01
+    threshold = np.max(A) * threshold_perc * 0.01
     if compression == 'rmr':
-        copy_matrix = matrix.copy()
+        copy_matrix = A.copy()
         print('Generating sparse matrix using RMR...')
         np.apply_along_axis(row_operation, 1, copy_matrix, threshold)
         S = scipy.sparse.csr_matrix(copy_matrix)
     else:
-        S = np.where(matrix >= threshold, matrix, 0)
+        S = np.where(A >= threshold, A, 0)
         S = scipy.sparse.csr_matrix(S)
     return S
 

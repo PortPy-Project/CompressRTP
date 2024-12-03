@@ -7,14 +7,14 @@ except ImportError:
     pass
 
 
-def get_sparse_plus_low_rank(A: np.ndarray, thresold_perc: float = 1, rank: int = 5):
+def get_sparse_plus_low_rank(A: np.ndarray, threshold_perc: float = 1, rank: int = 5):
     """
         :param A: dose influence matrix
-        :param thresold_perc: thresold percentage. Default to 1% of max(A)
+        :param threshold_perc: thresold percentage. Default to 1% of max(A)
         :type rank: rank of L = A-S.
         :returns: S, H, W using randomized svd
     """
-    tol = np.max(A) * thresold_perc * 0.01
+    tol = np.max(A) * threshold_perc * 0.01
     S = np.where(A > tol, A, 0)
     if rank == 0:
         S = scipy.sparse.csr_matrix(S)
