@@ -158,28 +158,6 @@ def ex_wavelet():
                               sol=[sol_no_quad_no_wav, sol_no_quad_with_wav, sol_quad_no_wav, sol_quad_with_wav],
                               sol_names=['no_quad_no_wav', 'no_quad_with_wav', 'quad_no_wav', 'quad_with_wav'])
 
-    '''
-    7) Visualize the dose dicrepancy between optimized and final deliverable plan using leaf sequencing
-    '''
-    # perform leaf sequencing for quadratic objective without and with wavelets using PortPy
-    leaf_seq_quad_no_wav = pp.leaf_sequencing_siochi(my_plan, sol_quad_no_wav)
-    leaf_seq_quad_wav = pp.leaf_sequencing_siochi(my_plan, sol_quad_with_wav)
-
-    # Visualize the dvh after performing leaf sequencing using the optimal intensities
-    # plot DVH for the structures in the given list. Default dose_1d is in Gy and volume is in relative scale(%).
-    struct_names = ['PTV', 'ESOPHAGUS', 'HEART', 'CORD', 'LUNG_L', 'LUNG_R']
-    num_fractions = my_plan.get_num_of_fractions()
-    fig, ax = plt.subplots(1, 2, figsize=(20, 7))
-    ax0 = pp.Visualization.plot_dvh(my_plan, sol=sol_no_quad_no_wav, struct_names=struct_names, style='solid', ax=ax[0])
-    ax0 = pp.Visualization.plot_dvh(my_plan, dose_1d=inf_matrix.A @ leaf_seq_quad_no_wav['optimal_intensity'] * num_fractions, struct_names=struct_names, style='dashed', ax=ax0)
-    fig.suptitle('DVH comparison')
-    ax0.set_title('Without wavelets \n solid: Before leaf sequencing, Dash: After leaf sequencing')
-
-    # fig, ax = plt.subplots(figsize=(12, 8))
-    ax1 = pp.Visualization.plot_dvh(my_plan, sol=sol_quad_with_wav, struct_names=struct_names, style='solid', ax=ax[1])
-    ax1 = pp.Visualization.plot_dvh(my_plan, dose_1d=inf_matrix.A @ leaf_seq_quad_wav['optimal_intensity'] * num_fractions, struct_names=struct_names, style='dashed', ax=ax1)
-    ax1.set_title('With wavelets \n solid: Before leaf sequencing, Dash: After leaf sequencing')
-    plt.show()
 
 if __name__ == "__main__":
     ex_wavelet()
