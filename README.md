@@ -7,7 +7,7 @@
 
 <h2 align="center">
   <a href="./images/RMR_NeurIPS_Paper.pdf">NeurIPS'2024 </a> | 
-    <a href="https://arxiv.org/abs/2410.00756">ArXiv'2024 </a> |
+    <a href="https://aapm.onlinelibrary.wiley.com/doi/full/10.1002/mp.17736">Medical Physics'2025 </a> |
   <a href="https://iopscience.iop.org/article/10.1088/1361-6560/acbefe/meta">PMB'2023</a>
 
 </h2>
@@ -179,6 +179,12 @@ Radiotherapy},
   year={2024}
 }
 
+@article{tefaghcompressed,
+  title={Compressed radiotherapy treatment planning: A new paradigm for rapid and high-quality treatment planning optimization},
+  author={Tefagh, Mojtaba and Jhanwar, Gourav and Zarepisheh, Masoud},
+  journal={Medical Physics},
+  publisher={Wiley Online Library}
+}
 
 @article{tefagh2023built,
   title={Built-in wavelet-induced smoothness to reduce plan complexity in intensity modulated radiation therapy (IMRT)},
@@ -191,12 +197,6 @@ Radiotherapy},
   publisher={IOP Publishing}
 }
 
-@article{tefagh2024compressed,
-  title={Compressed radiotherapy treatment planning (CompressRTP): A new paradigm for rapid and high-quality treatment planning optimization},
-  author={Tefagh, Mojtaba and Jhanwar, Gourav and Zarepisheh, Masoud},
-  journal={arXiv preprint arXiv:2410.00756},
-  year={2024}
-}
 
 
 ```
